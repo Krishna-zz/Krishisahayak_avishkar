@@ -18,7 +18,7 @@ const CropResult = () => {
       setData(res.data);
     };
     getData();
-  }, []);
+  }, [location, season]);
 
   return (
     <>
