@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import { connectDB, mongoose } from './db.js';
+import authRoutes from './Routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,6 +47,9 @@ app.get('/api/test/db', (req, res) => {
         });
     }
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use((req, res) => {
