@@ -2,7 +2,7 @@ import React from 'react'
 import Navbar from '../Components/Navbar'
 import Cardbutton from '../Components/Cardbutton';
 
-function Dashboard() {
+const Dashboard = () => {
    return (
     <>
       <Navbar />
