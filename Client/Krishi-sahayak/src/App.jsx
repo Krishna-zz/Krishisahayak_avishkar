@@ -18,9 +18,9 @@ function App() {
 
               <Route path="/crop-input" element={<CropInput/>}/>
 
-              <Route path="/disease-input" element={<CropInput/>}/>
+              <Route path="/disease-input" element={<DiseaseInput/>}/>
               
-              <Route path="/soil-input" element={<CropInput/>}/>
+              <Route path="/soil-input" element={<SoilInput/>}/>
           </Routes>
       </BrowserRouter>
     </>
