@@ -2,8 +2,11 @@ import Homepage from "./Pages/Homepage"
 import Navbar from "./Components/Navbar"
 import Dashboard from "./Pages/Dashboard"
 import CropInput from "./Pages/CropInput"
+import CropResult from "./Pages/CropResult"
 import DiseaseInput from "./Pages/DiseaseInput"
+import DiseaseResult from "./Pages/DiseaseResult"
 import SoilInput from "./Pages/SoilInput"
+import SoilResult from "./Pages/SoilResult"
 import { BrowserRouter, Router, Routes, Route } from "react-router-dom"
 
 function App() {
@@ -17,10 +20,13 @@ function App() {
               <Route path="/dashboard" element={<Dashboard/>}/>
 
               <Route path="/crop-input" element={<CropInput/>}/>
+              <Route path="/crop-result" element={<CropResult/>}/>
 
               <Route path="/disease-input" element={<DiseaseInput/>}/>
+              <Route path="/disease-result" element={<DiseaseResult/>}/>
               
               <Route path="/soil-input" element={<SoilInput/>}/>
+              <Route path="/soil-result" element={<SoilResult/>}/>
           </Routes>
       </BrowserRouter>
     </>
