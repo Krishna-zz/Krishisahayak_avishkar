@@ -1,0 +1,704 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "project": "Krishisahayak - Agricultural Advisory System",
+    "theme": "Digital Empowerment for Rural Communities",
+    "problemStatementId": "AVS317",
+    "createdAt": "2025-11-25",
+    "techStack": ["Express.js", "MongoDB", "Google Generative AI", "OpenWeather API"]
+  },
+  "system_prompts": {
+    "main_agricultural_advisor": {
+      "id": "PROMPT_AGRI_ADVISOR",
+      "title": "Expert Agricultural Advisor for Rural Farmers",
+      "role": "You are an expert agricultural advisor for small and marginal farmers in India",
+      "expertise": [
+        "Crop Selection based on soil type, climate, water availability, and market demand",
+        "Weather Analysis and interpretation for farming decisions",
+        "Soil Health assessment and nutrient analysis (N, P, K)",
+        "Resource Optimization for water, fertilizers, and pesticides",
+        "Pest & Disease Management with early detection strategies",
+        "Market Trends analysis for crop profitability",
+        "Government Schemes and subsidies information"
+      ],
+      "communication_guidelines": [
+        "Provide PRACTICAL, ACTIONABLE advice avoiding jargon",
+        "Consider LOCAL CONDITIONS for location-specific recommendations",
+        "Use SIMPLE LANGUAGE farmers understand",
+        "Give SPECIFIC QUANTITIES AND TIMINGS",
+        "Warn about COMMON MISTAKES",
+        "Suggest COST-EFFECTIVE alternatives",
+        "Include SEASONAL CONSIDERATIONS"
+      ],
+      "clarifying_questions": [
+        "Farm location (state, district, village)",
+        "Soil type and fertility status",
+        "Water availability (well, canal, borewell, rainwater)",
+        "Current weather conditions",
+        "Farm size in acres",
+        "Monthly budget for inputs",
+        "Existing crop patterns",
+        "Major challenges faced"
+      ],
+      "response_format": {
+        "RECOMMENDATION": "Specific action to take",
+        "WHY": "Scientific reasoning",
+        "HOW": "Step-by-step instructions",
+        "COST": "Approximate cost estimate",
+        "TIMING": "When to perform action",
+        "RISK": "Potential issues to monitor",
+        "BENEFIT": "Expected outcomes",
+        "GOVERNMENT_SUPPORT": "Applicable schemes"
+      }
+    },
+    "krishisahayak_chatbot": {
+      "id": "PROMPT_KRISHISAHAYAK",
+      "title": "Krishisahayak - Friendly Farm Assistant",
+      "name": "Krishisahayak",
+      "meaning": "Agricultural Helper in Hindi",
+      "personality_traits": [
+        "Friendly and approachable like a trusted village elder",
+        "Patient with repetitive or simple questions",
+        "Non-judgmental about traditional farming methods",
+        "Encouraging and motivational during hardships",
+        "Practical with real-world solutions",
+        "Culturally sensitive to local traditions",
+        "Time-conscious for seasonal advice"
+      ],
+      "communication_style": [
+        "Use local language references (Hindi-English mix)",
+        "Start with: 'Namaste bhai/bahan! How can I help your farm today?'",
+        "Share success stories from similar farmers",
+        "Acknowledge local weather and festivals",
+        "Show genuine interest in farming challenges",
+        "Be optimistic yet realistic"
+      ],
+      "key_responsibilities": [
+        "Recommend suitable crops based on conditions",
+        "Provide weather-based planting/harvesting advice",
+        "Suggest soil improvement techniques",
+        "Calculate optimal fertilizer/pesticide doses",
+        "Alert about upcoming pests/diseases",
+        "Troubleshoot crop problems",
+        "Provide market price information",
+        "Suggest cost-saving techniques"
+      ],
+      "emotional_support": {
+        "when_farmer_distressed": [
+          "Acknowledge their concern genuinely",
+          "Provide both traditional and modern solutions",
+          "Suggest government schemes and subsidies",
+          "Offer to connect with local agricultural officer",
+          "Provide moral support and encouragement"
+        ]
+      }
+    },
+    "soil_analysis": {
+      "id": "PROMPT_SOIL_ANALYSIS",
+      "title": "Soil Health and Nutrient Analysis Expert",
+      "context": "Analyze uploaded soil images to determine soil properties",
+      "analysis_points": [
+        "Soil color and texture characteristics",
+        "Estimated soil type (clay, sandy, loamy, etc.)",
+        "Organic matter assessment",
+        "Estimated NPK (Nitrogen, Phosphorus, Potassium) levels",
+        "pH level estimation",
+        "Water retention capacity",
+        "Microbial activity indicators",
+        "Contamination or erosion signs"
+      ],
+      "recommendations_based_on": [
+        "Identified soil deficiencies",
+        "Suitable crops for soil type",
+        "Required amendments and doses",
+        "Application timing and methods",
+        "Cost-benefit analysis",
+        "Long-term soil improvement plan"
+      ]
+    },
+    "disease_detection": {
+      "id": "PROMPT_DISEASE_DETECTION",
+      "title": "Crop Disease and Pest Identification Expert",
+      "context": "Analyze leaf/crop images to identify diseases and pests",
+      "detection_parameters": [
+        "Disease or pest identification",
+        "Severity level (mild, moderate, severe)",
+        "Stage of disease progression",
+        "Affected plant parts",
+        "Environmental conditions triggering it",
+        "Spread potential and speed"
+      ],
+      "treatment_recommendations": [
+        "Immediate actions required",
+        "Preventive measures for future",
+        "Organic/chemical treatment options",
+        "Dosage and application method",
+        "Safety precautions",
+        "Recovery timeline",
+        "Cost of treatment"
+      ]
+    }
+  },
+  "crop_database": {
+    "metadata": {
+      "total_crops": 25,
+      "regions_covered": "Pan-India",
+      "last_updated": "2025-11-25"
+    },
+    "crops": [
+      {
+        "id": "CROP_001",
+        "name": "Rice (Paddy)",
+        "hindi_name": "Chawal",
+        "regions": ["North India", "Eastern India", "Southern India"],
+        "seasons": ["Kharif (June-Oct)", "Rabi (Oct-March) - limited"],
+        "soil_requirements": {
+          "type": ["Clayey", "Loamy"],
+          "ph_range": "5.5-7.5",
+          "drainage": "Poor to moderate"
+        },
+        "water_requirement": "High - 150-250 cm annually",
+        "nitrogen_kg_per_acre": 60,
+        "phosphorus_kg_per_acre": 30,
+        "potassium_kg_per_acre": 30,
+        "yield_potential_qtl_per_acre": "40-50",
+        "market_price_per_qtl": "2000-2500",
+        "common_diseases": ["Blast", "Sheath Blight", "Stem Rot"],
+        "common_pests": ["Stem Borer", "Leaf Folder", "Gall Midge"],
+        "pest_control": {
+          "organic": "Neem oil spray, Bacillus thuringiensis",
+          "chemical": "Chlorantraniliprole 18.5% SC @ 150 ml per acre"
+        },
+        "fertilizer_schedule": [
+          {
+            "stage": "Basal (at planting)",
+            "nitrogen": 20,
+            "phosphorus": 30,
+            "potassium": 30
+          },
+          {
+            "stage": "First top-dressing (30 days)",
+            "nitrogen": 20,
+            "phosphorus": 0,
+            "potassium": 0
+          },
+          {
+            "stage": "Second top-dressing (60 days)",
+            "nitrogen": 20,
+            "phosphorus": 0,
+            "potassium": 0
+          }
+        ],
+        "harvesting_days": "120-150",
+        "profitability_score": 8,
+        "risk_level": "Medium"
+      },
+      {
+        "id": "CROP_002",
+        "name": "Wheat",
+        "hindi_name": "Gehun",
+        "regions": ["North India", "Central India"],
+        "seasons": ["Rabi (Oct-March)"],
+        "soil_requirements": {
+          "type": ["Well-drained loamy", "Clay loamy"],
+          "ph_range": "6.5-7.5",
+          "drainage": "Well-drained"
+        },
+        "water_requirement": "40-50 cm total",
+        "nitrogen_kg_per_acre": 80,
+        "phosphorus_kg_per_acre": 40,
+        "potassium_kg_per_acre": 30,
+        "yield_potential_qtl_per_acre": "35-45",
+        "market_price_per_qtl": "2200-2800",
+        "common_diseases": ["Rust", "Smut", "Karnal Bunt"],
+        "common_pests": ["Armyworm", "Sawfly", "Termites"],
+        "pest_control": {
+          "organic": "Trichoderma, Azospirillum seed treatment",
+          "chemical": "Hexaconazole 5% EC @ 1000 ml per acre"
+        },
+        "harvesting_days": "120-150",
+        "profitability_score": 7,
+        "risk_level": "Low"
+      },
+      {
+        "id": "CROP_003",
+        "name": "Maize (Corn)",
+        "hindi_name": "Makka",
+        "regions": ["North India", "South India", "Eastern India"],
+        "seasons": ["Kharif (May-Oct)", "Rabi (Oct-March)", "Summer (Feb-May)"],
+        "soil_requirements": {
+          "type": ["Well-drained loamy", "Sandy loamy"],
+          "ph_range": "6.0-7.5",
+          "drainage": "Good"
+        },
+        "water_requirement": "50-60 cm total",
+        "nitrogen_kg_per_acre": 100,
+        "phosphorus_kg_per_acre": 40,
+        "potassium_kg_per_acre": 30,
+        "yield_potential_qtl_per_acre": "30-40",
+        "market_price_per_qtl": "1800-2400",
+        "common_diseases": ["Leaf Blight", "Ear Rot", "Stalk Rot"],
+        "common_pests": ["Shoot Fly", "Stem Borer", "Fall Armyworm"],
+        "pest_control": {
+          "organic": "Bacillus thuringiensis spray",
+          "chemical": "Chlorantraniliprole 18.5% SC @ 200 ml per acre"
+        },
+        "fertilizer_schedule": [
+          {
+            "stage": "Basal",
+            "nitrogen": 40,
+            "phosphorus": 40,
+            "potassium": 30
+          },
+          {
+            "stage": "At 4-6 leaf stage",
+            "nitrogen": 60,
+            "phosphorus": 0,
+            "potassium": 0
+          }
+        ],
+        "harvesting_days": "90-120",
+        "profitability_score": 8,
+        "risk_level": "Low"
+      },
+      {
+        "id": "CROP_004",
+        "name": "Potato",
+        "hindi_name": "Aloo",
+        "regions": ["North India", "North-Eastern India", "Himalayan regions"],
+        "seasons": ["Kharif (May-Oct)", "Rabi (Sept-Feb)"],
+        "soil_requirements": {
+          "type": ["Well-drained loamy", "Sandy loamy"],
+          "ph_range": "5.5-7.0",
+          "drainage": "Excellent"
+        },
+        "water_requirement": "40-50 cm total",
+        "nitrogen_kg_per_acre": 120,
+        "phosphorus_kg_per_acre": 60,
+        "potassium_kg_per_acre": 100,
+        "yield_potential_qtl_per_acre": "200-250",
+        "market_price_per_qtl": "800-1500",
+        "common_diseases": ["Late Blight", "Early Blight", "Soft Rot"],
+        "common_pests": ["Potato Tuber Moth", "Aphids", "Beetles"],
+        "pest_control": {
+          "organic": "Neem oil, Bacillus thuringiensis",
+          "chemical": "Mancozeb 75% WP @ 2 kg per acre"
+        },
+        "harvesting_days": "90-120",
+        "profitability_score": 9,
+        "risk_level": "Medium"
+      },
+      {
+        "id": "CROP_005",
+        "name": "Tomato",
+        "hindi_name": "Tamatar",
+        "regions": ["All regions"],
+        "seasons": ["Kharif", "Rabi", "Summer"],
+        "soil_requirements": {
+          "type": ["Well-drained loamy"],
+          "ph_range": "6.0-6.8",
+          "drainage": "Good"
+        },
+        "water_requirement": "45-60 cm total",
+        "nitrogen_kg_per_acre": 100,
+        "phosphorus_kg_per_acre": 50,
+        "potassium_kg_per_acre": 50,
+        "yield_potential_qtl_per_acre": "100-150",
+        "market_price_per_qtl": "1500-3000",
+        "common_diseases": ["Early Blight", "Late Blight", "Leaf Curl Virus"],
+        "common_pests": ["Fruit Borer", "Aphids", "Whiteflies"],
+        "pest_control": {
+          "organic": "Neem spray, Yellow sticky traps",
+          "chemical": "Spinosad 45% SC @ 300 ml per acre"
+        },
+        "harvesting_days": "60-70 (continuous)",
+        "profitability_score": 9,
+        "risk_level": "High"
+      }
+    ]
+  },
+  "soil_types_database": {
+    "total_types": 5,
+    "soil_types": [
+      {
+        "id": "SOIL_001",
+        "name": "Black Soil (Vertisol)",
+        "characteristics": {
+          "color": "Black to dark brown",
+          "texture": "Heavy clay",
+          "water_holding_capacity": "High",
+          "drainage": "Poor to moderate"
+        },
+        "suitable_crops": ["Cotton", "Sugarcane", "Pulses", "Jowar"],
+        "ph_range": "7.5-8.5",
+        "typical_nitrogen": "Low (150-300 kg/ha)",
+        "typical_phosphorus": "Low (10-25 kg/ha)",
+        "typical_potassium": "High (300-500 kg/ha)",
+        "improvement_tips": [
+          "Add organic matter regularly",
+          "Practice green manuring",
+          "Apply nitrogen-rich fertilizers"
+        ]
+      },
+      {
+        "id": "SOIL_002",
+        "name": "Alluvial Soil",
+        "characteristics": {
+          "color": "Light brown to grey",
+          "texture": "Varies - loamy to sandy",
+          "water_holding_capacity": "Moderate",
+          "drainage": "Good"
+        },
+        "suitable_crops": ["Rice", "Wheat", "Sugarcane", "Vegetables"],
+        "ph_range": "7.0-8.0",
+        "typical_nitrogen": "Medium (200-400 kg/ha)",
+        "typical_phosphorus": "Medium (15-30 kg/ha)",
+        "typical_potassium": "Medium (200-400 kg/ha)",
+        "improvement_tips": [
+          "Add manure annually",
+          "Crop rotation essential",
+          "Use bio-fertilizers"
+        ]
+      },
+      {
+        "id": "SOIL_003",
+        "name": "Red Soil",
+        "characteristics": {
+          "color": "Reddish-brown",
+          "texture": "Sandy to clay loam",
+          "water_holding_capacity": "Low to moderate",
+          "drainage": "Good"
+        },
+        "suitable_crops": ["Millet", "Pulses", "Groundnut", "Maize"],
+        "ph_range": "5.5-7.0",
+        "typical_nitrogen": "Low (100-200 kg/ha)",
+        "typical_phosphorus": "Low (8-15 kg/ha)",
+        "typical_potassium": "Low (100-200 kg/ha)",
+        "improvement_tips": [
+          "Heavy manuring required",
+          "Lime application if acidic",
+          "Use phosphate-rich fertilizers"
+        ]
+      },
+      {
+        "id": "SOIL_004",
+        "name": "Laterite Soil",
+        "characteristics": {
+          "color": "Red to brown",
+          "texture": "Clay",
+          "water_holding_capacity": "High but poor drainage",
+          "drainage": "Poor"
+        },
+        "suitable_crops": ["Coconut", "Arecanut", "Spices", "Tea"],
+        "ph_range": "4.5-6.0",
+        "typical_nitrogen": "Medium (250-400 kg/ha)",
+        "typical_phosphorus": "Low (10-20 kg/ha)",
+        "typical_potassium": "Medium (200-300 kg/ha)",
+        "improvement_tips": [
+          "Lime application for acidity",
+          "Drainage improvement",
+          "Add phosphorus fertilizers"
+        ]
+      },
+      {
+        "id": "SOIL_005",
+        "name": "Sandy Soil",
+        "characteristics": {
+          "color": "Light brown to tan",
+          "texture": "Coarse sandy",
+          "water_holding_capacity": "Very low",
+          "drainage": "Excessive"
+        },
+        "suitable_crops": ["Groundnut", "Millet", "Watermelon", "Vegetables"],
+        "ph_range": "6.5-8.0",
+        "typical_nitrogen": "Very low (50-150 kg/ha)",
+        "typical_phosphorus": "Low (5-15 kg/ha)",
+        "typical_potassium": "Low (50-150 kg/ha)",
+        "improvement_tips": [
+          "Heavy organic matter addition (10-15 tons/ha)",
+          "Mulching essential",
+          "Frequent light irrigation"
+        ]
+      }
+    ]
+  },
+  "pest_and_disease_database": {
+    "total_entries": 12,
+    "pests_diseases": [
+      {
+        "id": "PD_001",
+        "type": "Disease",
+        "name": "Rice Blast",
+        "affected_crop": "Rice",
+        "symptoms": [
+          "Small oval or elongated spots with brown borders",
+          "Gray center on leaves",
+          "Spreads rapidly in humid conditions",
+          "Can affect stems and grain"
+        ],
+        "severity_levels": {
+          "mild": "Isolated spots on older leaves",
+          "moderate": "Multiple spots on middle leaves",
+          "severe": "Extensive damage, grain affected"
+        },
+        "weather_conditions": "High humidity (>90%), Temperature 20-28°C, Leaf wetness >12 hours",
+        "prevention": [
+          "Use resistant varieties",
+          "Maintain field sanitation",
+          "Avoid excessive nitrogen",
+          "Ensure proper drainage"
+        ],
+        "organic_treatment": [
+          "Tricyclazole spray @ 0.6% solution",
+          "Copper fungicide spray",
+          "Neem oil spray"
+        ],
+        "chemical_treatment": [
+          "Propiconazole 25% EC @ 1000 ml per acre",
+          "Carbendazim 50% WP @ 1000 ml per acre"
+        ],
+        "treatment_schedule": "Every 10-15 days from panicle initiation",
+        "recovery_time": "3-4 weeks"
+      },
+      {
+        "id": "PD_002",
+        "type": "Pest",
+        "name": "Stem Borer",
+        "affected_crop": "Maize, Rice, Sugarcane",
+        "symptoms": [
+          "Holes in stems and leaves",
+          "Wilting of central leaf (dead heart)",
+          "White tunnels inside stem",
+          "Exit holes with frass (insect droppings)"
+        ],
+        "severity_levels": {
+          "mild": "1-5 damaged plants per 10m²",
+          "moderate": "5-10 damaged plants per 10m²",
+          "severe": ">10 damaged plants per 10m²"
+        },
+        "vulnerable_stage": "Seedling to boot stage",
+        "prevention": [
+          "Crop rotation",
+          "Destroy crop residue",
+          "Use light traps",
+          "Plant resistant varieties"
+        ],
+        "organic_treatment": [
+          "Bacillus thuringiensis spray @ 1 kg per acre",
+          "Entomopathogenic fungi (Beauveria)",
+          "Hand-picking larvae"
+        ],
+        "chemical_treatment": [
+          "Chlorantraniliprole 18.5% SC @ 200 ml per acre",
+          "Carbofuran 3% Granules @ 10 kg per acre"
+        ],
+        "treatment_schedule": "2-3 sprays at 10-15 day intervals from seedling stage",
+        "recovery_time": "2-3 weeks"
+      },
+      {
+        "id": "PD_003",
+        "type": "Disease",
+        "name": "Late Blight (Potato)",
+        "affected_crop": "Potato, Tomato",
+        "symptoms": [
+          "Water-soaked irregular spots on leaves",
+          "Dark olive-green lesions",
+          "White fungal growth on leaf undersides",
+          "Rapid spread in cool, wet conditions",
+          "Infected tubers turn brown/black"
+        ],
+        "severity_levels": {
+          "mild": "<10% leaf area affected",
+          "moderate": "10-30% leaf area affected",
+          "severe": ">30% leaf area affected, stem involvement"
+        },
+        "weather_conditions": "Cool weather (10-20°C), High humidity (>80%), Rains/overhead irrigation",
+        "prevention": [
+          "Use certified seed potatoes",
+          "Crop rotation (3-year)",
+          "Remove infected plants immediately",
+          "Improve air circulation"
+        ],
+        "organic_treatment": [
+          "Copper fungicide (Bordeaux mixture) 1%",
+          "Mancozeb 75% WP @ 2 kg per acre"
+        ],
+        "chemical_treatment": [
+          "Metalaxyl 8% + Mancozeb 64% @ 2 kg per acre",
+          "Fluopicolide 23.2% @ 1000 ml per acre"
+        ],
+        "treatment_schedule": "Start preventive sprays in monsoon, repeat every 7-10 days",
+        "recovery_time": "10-14 days (preventive)"
+      },
+      {
+        "id": "PD_004",
+        "type": "Pest",
+        "name": "Fruit Borer (Tomato)",
+        "affected_crop": "Tomato, Brinjal, Pepper",
+        "symptoms": [
+          "Entry holes on fruit surface",
+          "Frass and decay inside fruit",
+          "Larvae visible inside fruit",
+          "Premature fruit drop",
+          "Irregular holes on leaves"
+        ],
+        "severity_levels": {
+          "mild": "1-5% fruits affected",
+          "moderate": "5-15% fruits affected",
+          "severe": ">15% fruits affected"
+        },
+        "vulnerable_stage": "Flowering to fruit maturity",
+        "prevention": [
+          "Remove infested fruits immediately",
+          "Use pheromone traps",
+          "Deep summer plowing",
+          "Intercropping with aromatic plants"
+        ],
+        "organic_treatment": [
+          "Spinosad 45% SC @ 300 ml per acre",
+          "NSKE (Neem Seed Kernel Extract) 5%",
+          "Hand-picking infected fruits"
+        ],
+        "chemical_treatment": [
+          "Quinalphos 25% EC @ 1500 ml per acre",
+          "Flubendiamide 39.35% SC @ 300 ml per acre"
+        ],
+        "treatment_schedule": "Every 10-15 days from flower initiation",
+        "recovery_time": "3-4 weeks"
+      }
+    ]
+  },
+  "fertilizer_dosage_guide": {
+    "total_nutrients": 3,
+    "primary_nutrients": [
+      {
+        "name": "Nitrogen (N)",
+        "sources": [
+          {
+            "name": "Urea",
+            "percentage": "46% N",
+            "price_per_kg": "5-7",
+            "application_timing": "In splits - 50% basal, 50% during growth"
+          },
+          {
+            "name": "Ammonium Sulphate",
+            "percentage": "21% N",
+            "price_per_kg": "8-10",
+            "application_timing": "Basal or during growth"
+          },
+          {
+            "name": "Neem Cake",
+            "percentage": "3-4% N",
+            "price_per_kg": "15-20",
+            "application_timing": "Basal application"
+          }
+        ],
+        "deficiency_symptoms": [
+          "Pale green or yellowish leaves",
+          "Stunted growth",
+          "Poor tillering",
+          "Reduced yield"
+        ],
+        "excess_symptoms": [
+          "Dark green foliage",
+          "Soft growth prone to diseases",
+          "Delayed maturity",
+          "Lodging risk"
+        ]
+      },
+      {
+        "name": "Phosphorus (P)",
+        "sources": [
+          {
+            "name": "Single Super Phosphate (SSP)",
+            "percentage": "16% P₂O₅",
+            "price_per_kg": "12-15",
+            "application_timing": "Basal application"
+          },
+          {
+            "name": "Triple Super Phosphate (TSP)",
+            "percentage": "46% P₂O₅",
+            "price_per_kg": "20-25",
+            "application_timing": "Basal application"
+          }
+        ],
+        "deficiency_symptoms": [
+          "Purple or brownish leaf color",
+          "Poor root development",
+          "Delayed flowering",
+          "Reduced seed production"
+        ],
+        "excess_symptoms": [
+          "Rare in field conditions",
+          "Can reduce zinc availability"
+        ]
+      },
+      {
+        "name": "Potassium (K)",
+        "sources": [
+          {
+            "name": "Muriate of Potash (MOP)",
+            "percentage": "60% K₂O",
+            "price_per_kg": "25-30",
+            "application_timing": "Basal application"
+          },
+          {
+            "name": "Sulphate of Potash",
+            "percentage": "50% K₂O",
+            "price_per_kg": "35-40",
+            "application_timing": "Basal or during growth"
+          }
+        ],
+        "deficiency_symptoms": [
+          "Scorching of leaf margins",
+          "Yellow veins with green centers",
+          "Poor disease resistance",
+          "Reduced quality of produce"
+        ],
+        "excess_symptoms": [
+          "Reduced uptake of magnesium",
+          "Rare field symptom"
+        ]
+      }
+    ]
+  },
+  "weather_advisory_guidelines": {
+    "parameters_to_monitor": [
+      "Daily rainfall",
+      "Temperature (max/min)",
+      "Humidity levels",
+      "Wind speed",
+      "Sunshine hours",
+      "Cloud cover"
+    ],
+    "advisory_triggers": [
+      {
+        "condition": "Heavy rainfall expected (>50mm in 48 hours)",
+        "action": [
+          "Ensure field drainage",
+          "Postpone pesticide spray",
+          "Be alert for disease outbreaks",
+          "Avoid harvesting"
+        ]
+      },
+      {
+        "condition": "High temperature (>35°C for extended period)",
+        "action": [
+          "Increase irrigation frequency",
+          "Monitor for pest outbreaks",
+          "Mulch to conserve moisture",
+          "Avoid fertilizer application"
+        ]
+      },
+      {
+        "condition": "High humidity (>85% for multiple days)",
+        "action": [
+          "Increase fungicide sprays",
+          "Improve field ventilation",
+          "Monitor for fungal diseases",
+          "Plan preventive measures"
+        ]
+      }
+    ]
+  }
+}
