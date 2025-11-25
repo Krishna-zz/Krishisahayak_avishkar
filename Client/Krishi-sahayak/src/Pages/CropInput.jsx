@@ -7,8 +7,10 @@ const CropInput = () => {
     const [location, setLocation] = useState("");
   const [season, setSeason] = useState("summer");
 
+  const navigate = useNavigate()
+
   const handleSubmit = () => {
-    window.location.href = `/crop-result?location=${location}&season=${season}`;
+   navigate(`/crop-result?location=${location}&season=${season}`);
   };
 
   return (
