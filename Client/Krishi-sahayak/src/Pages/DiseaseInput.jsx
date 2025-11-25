@@ -7,19 +7,19 @@ const DiseaseInput = () => {
    const [image, setImage] = useState(null);
 
   const submit = () => {
-    const fd = new FormData();
-    fd.append("image", image);
+  const fd = new FormData();
+  fd.append("image", image);
 
-    fetch("http://localhost:5000/api/disease", {
-      method: "POST",
-      body: fd,
-    })
-      .then(res => res.json())
-      .then(data => {
-        localStorage.setItem("disease", JSON.stringify(data));
-        window.location.href = "/disease-result";
-      });
-  };
+  fetch("http://localhost:5000/api/disease", {
+    method: "POST",
+    body: fd,
+  })
+    .then(res => res.json())
+    .then(data => {
+      localStorage.setItem("disease", JSON.stringify(data));
+      window.location.href = "/disease-result";
+    });
+};
 
   return (
     <>
