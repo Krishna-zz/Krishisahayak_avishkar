@@ -6,6 +6,7 @@ import cors from 'cors';
 import { connectDB, mongoose } from './db.js';
 import authRoutes from './Routes/authRoutes.js';
 import diseaseRoutes from './Routes/diseaseRoutes.js';
+import cropAdviceRoutes from './Routes/cropAdviceRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,9 @@ app.use('/api/auth', authRoutes);
 
 // Disease/Image analysis routes
 app.use('/api/analyze', diseaseRoutes);
+
+// Crop advice routes
+app.use('/api/crop-advice', cropAdviceRoutes);
 
 // 404 handler
 app.use((req, res) => {
