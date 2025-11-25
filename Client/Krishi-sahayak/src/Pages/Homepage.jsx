@@ -1,7 +1,15 @@
 import React from 'react'
 import Navbar from '../Components/Navbar'
+import { useNavigate } from 'react-router';
 
 function Homepage() {
+
+    const navigate = useNavigate()
+
+    const GotoDashboard = () => {
+        navigate("/dashboard")
+    }
+
   return (
     <>
       <Navbar />
@@ -12,12 +20,12 @@ function Homepage() {
         <p className="text-lg text-gray-700 mb-6 max-w-2xl">
           Get real-time, location-based crop guidance, disease detection, and soil health analysis.
         </p>
-        <a
-          href="/dashboard"
+         <button
+          onClick={GotoDashboard}
           className="px-8 py-3 bg-green-600 text-white text-lg rounded-lg shadow-md hover:bg-green-700"
         >
           Go to Dashboard
-        </a>
+        </button>
       </div>
     </>
   );
