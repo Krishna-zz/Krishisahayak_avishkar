@@ -4,6 +4,7 @@ import Navbar from '../Components/Navbar';
 
 const SoilInput = () => {
    const [image, setImage] = useState(null);
+   const navigate = useNavigate()
 
   const submit = () => {
     const fd = new FormData();
@@ -16,7 +17,7 @@ const SoilInput = () => {
       .then(res => res.json())
       .then(data => {
         localStorage.setItem("soil", JSON.stringify(data));
-        window.location.href = "/soil-result";
+        navigate("/soil-result")
       });
   };
 

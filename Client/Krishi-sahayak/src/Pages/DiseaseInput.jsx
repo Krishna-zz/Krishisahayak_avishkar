@@ -1,10 +1,12 @@
 
 import Navbar from '../Components/Navbar';
-
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 
 const DiseaseInput = () => {
    const [image, setImage] = useState(null);
+
+   const navigate = useNavigate()
 
   const submit = () => {
   const fd = new FormData();
@@ -17,7 +19,7 @@ const DiseaseInput = () => {
     .then(res => res.json())
     .then(data => {
       localStorage.setItem("disease", JSON.stringify(data));
-      window.location.href = "/disease-result";
+      navigate("/disease-result")
     });
 };
 

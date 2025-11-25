@@ -1,5 +1,4 @@
 import Homepage from "./Pages/Homepage"
-import Navbar from "./Components/Navbar"
 import Dashboard from "./Pages/Dashboard"
 import CropInput from "./Pages/CropInput"
 import CropResult from "./Pages/CropResult"
@@ -7,7 +6,7 @@ import DiseaseInput from "./Pages/DiseaseInput"
 import DiseaseResult from "./Pages/DiseaseResult"
 import SoilInput from "./Pages/SoilInput"
 import SoilResult from "./Pages/SoilResult"
-import { BrowserRouter, Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter,  Routes, Route } from "react-router-dom"
 
 function App() {
   
