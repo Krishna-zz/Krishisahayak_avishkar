@@ -4,7 +4,7 @@ import Dashboard from "./Pages/Dashboard"
 import CropInput from "./Pages/CropInput"
 import DiseaseInput from "./Pages/DiseaseInput"
 import SoilInput from "./Pages/SoilInput"
-import { BrowserRouter, Router, Routes, Route } from "react-router"
+import { BrowserRouter, Router, Routes, Route } from "react-router-dom"
 
 function App() {
   
