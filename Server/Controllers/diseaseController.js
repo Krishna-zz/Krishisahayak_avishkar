@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import fs from 'fs';
 import path from 'path';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateText } from 'ai';
+import { google } from '@ai-sdk/google';
 import { fileURLToPath } from 'url';
 
 // Get current directory
@@ -10,9 +14,6 @@ const __dirname = path.dirname(__filename);
 // Read prompts.json
 const promptsPath = path.join(__dirname, '../prompts.json');
 const promptsData = JSON.parse(fs.readFileSync(promptsPath, 'utf8'));
-
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Ensure uploads directory exists
 const uploadsDir = './uploads';
@@ -73,9 +74,6 @@ export const uploadImage = async (req, res) => {
  */
 export const analyzeImage = async (req, res) => {
     try {
-
-        console.log("API Key : ", process.env.GEMINI_API_KEY);
-
         if (!req.file) {
             return res.status(400).json({ error: 'No image file provided' });
         }
@@ -98,11 +96,9 @@ export const analyzeImage = async (req, res) => {
         const imageBase64 = imageToBase64(filepath);
 
         // Get appropriate prompt based on analysis type
-        let systemPrompt = '';
         let userPrompt = '';
 
         if (analyzeType === 'soil') {
-            systemPrompt = promptsData.system_prompts.soil_analysis.title;
             userPrompt = `${promptsData.system_prompts.soil_analysis.title}
             
 Analysis Points to Cover:
@@ -128,7 +124,6 @@ Return the analysis in JSON format with the following structure:
   "confidence_score": 0.0-1.0
 }`;
         } else if (analyzeType === 'disease') {
-            systemPrompt = promptsData.system_prompts.disease_detection.title;
             userPrompt = `${promptsData.system_prompts.disease_detection.title}
             
 Detection Parameters to Check:
@@ -158,49 +153,26 @@ Return the analysis in JSON format with the following structure:
 }`;
         }
 
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-2.5-flash'
-        })
-
-        const result = await model.generateContent({
-            contents: [
+        // Call Gemini API using Vercel AI SDK with vision
+        const result = await generateText({
+            model: google('gemini-2.5-flash'),
+            messages: [
                 {
                     role: 'user',
-                    parts: [
+                    content: [
                         {
-                            inlineData: {
-                                mimeType: mimeType,
-                                data: imageBase64
-                            }
+                            type: 'image',
+                            image: Buffer.from(imageBase64, 'base64'),
+                            mimeType: mimeType
                         },
                         {
+                            type: 'text',
                             text: userPrompt
                         }
                     ]
                 }
             ]
-        })
-
-        // Call Gemini API with vision using old library format
-        // const response = await genAI.models.generateContent({
-        //     model: 'gemini-2.0-flash',
-        //     contents: [
-        //         {
-        //             role: 'user',
-        //             parts: [
-        //                 {
-        //                     inlineData: {
-        //                         mimeType: mimeType,
-        //                         data: imageBase64
-        //                     }
-        //                 },
-        //                 {
-        //                     text: userPrompt
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // });
+        });
 
         console.log('Gemini response:', result.text);
 
