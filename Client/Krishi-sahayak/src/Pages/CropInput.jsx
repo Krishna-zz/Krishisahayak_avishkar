@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from '../Components/Navbar'
-import axios from 'axios'
+
 
 const CropInput = () => {
     const [location, setLocation] = useState("");
   const [season, setSeason] = useState("summer");
 
-  
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     window.location.href = `/crop-result?location=${location}&season=${season}`;
   };
 
