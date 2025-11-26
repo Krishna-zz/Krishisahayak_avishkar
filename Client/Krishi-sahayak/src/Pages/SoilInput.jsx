@@ -10,7 +10,7 @@ const SoilInput = () => {
     const fd = new FormData();
     fd.append("image", image);
 
-    fetch("http://localhost:5000/api/soil", {
+    fetch("http://localhost:5000/api/analyze/analyze-soil", {
       method: "POST",
       body: fd,
     })
@@ -30,7 +30,7 @@ const SoilInput = () => {
         <input
           type="file"
           onChange={(e) => setImage(e.target.files[0])}
-          className="mb-6"
+          className="mb-6 px-5 py-2 border-2 border-black rounded-xl"
         />
 
         <button

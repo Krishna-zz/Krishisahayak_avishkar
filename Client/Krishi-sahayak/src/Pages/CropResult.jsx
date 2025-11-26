@@ -11,14 +11,22 @@ const CropResult = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await axios.post("http://localhost:5000/api/crop", {
-        location,
-        season,
-      });
+
+      const data = {
+        location : location,
+        additionalInfo : `${season}`
+      }
+
+
+      const res = await axios.post("http://localhost:5000/api/crop-advice/suggest",data);
       setData(res.data);
     };
     getData();
   }, [location, season]);
+
+  useEffect(() => {
+    console.log(data)
+  },[data])
 
   return (
     <>
@@ -33,26 +41,32 @@ const CropResult = () => {
           <div className="bg-white border shadow-md p-6 rounded-lg space-y-4">
             <div>
               <h2 className="text-xl font-bold">Best Crops:</h2>
-              <ul className="list-disc ml-6">
-                {data.crops.map((crop, idx) => (
-                  <li key={idx}>{crop}</li>
-                ))}
-              </ul>
+              {data.data.cropAdvice.bestCrops}
             </div>
+
+            
 
             <div>
               <h2 className="text-xl font-bold">Fertilizer Advice:</h2>
-              <p>{data.fertilizerRecommendations}</p>
+              <p>{data.data.cropAdvice
+.fertiliserRecommendation}</p>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold">Farming Tips:</h2>
+              {data.data.cropAdvice.farmingTips}
             </div>
 
             <div>
               <h2 className="text-xl font-bold">Disease Risk:</h2>
-              <p>{data.diseaseRisk}</p>
+              <p>{data.data.cropAdvice.riskFactors}</p>
             </div>
 
             <div>
               <h2 className="text-xl font-bold">Additional Info:</h2>
-              <p>{data.additionalInfo}</p>
+              <br />
+              <h1 className="font-bold">Profitability:</h1>
+              <p>{data.data.cropAdvice.profitabilityIndex}</p>
             </div>
           </div>
         )}
